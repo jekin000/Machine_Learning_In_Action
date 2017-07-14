@@ -1,6 +1,7 @@
 import numpy as np
 import operator
 import os
+import time
 
 def createDataSet():
 	group = np.array([[1.0,1.1] ,[1.0,1.0] ,[0,0] ,[0,0.1]])
@@ -140,6 +141,7 @@ def loadTestingDigits():
 
 def myDigitsClassTest():
 	k = 3
+	t1 = time.time()
 	trainMat,trainLabels = loadTrainingDigits()
 	testMat,testLabels  = loadTestingDigits()
 	m = testMat.shape[0]
@@ -148,8 +150,10 @@ def myDigitsClassTest():
 		label = classify0(testMat[i,:],trainMat,trainLabels,k)
 		if label != testLabels[i]:
 			ErrorCount = ErrorCount + 1.0
+	t2 = time.time()
 	print "k[%d], total error count=[%d]" % (k,int(ErrorCount))
 	print "k[%d], total error-rate=[%f]" % (k,ErrorCount/float(m))
+	print "Cost time: %.2fmin, %.4fs."%((t2-t1)//60,(t2-t1)%60)
 	return
 
 def handwritingClassTest():
