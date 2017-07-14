@@ -1,1 +1,1 @@
-git commit -m "[05]-ch02 add time calc to myDigitsClassTest"
+git commit -m "[06]-ch03 doing tree for chooseBestFeatureSplit"
