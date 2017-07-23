@@ -1,1 +1,1 @@
-git commit -m "[10]-ch03 add glass testdata"
+git commit -m "[11]-ch04 word2Vec"
