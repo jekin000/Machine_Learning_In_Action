@@ -84,3 +84,26 @@ def createTree(dataSet,labels):
 		subLabels = labels[:]
 		myTree[bestFeatLabel][value] = createTree(splitDataSet(dataSet,bestFeat,value),subLabels)
 	return myTree
+
+def classify(inputTree,featLabels,testVec):
+	ftLabel = inputTree.keys()[0]
+	ftDvide = inputTree[ftLabel]
+	#list.index
+	featIndex = featLabels.index(ftLabel)
+
+	#do decision
+	result = ftDvide.get(testVec[featIndex])
+	if type(result).__name__ == 'dict':
+		classifyLabel = classify(result,featLabels,testVec)
+	else:
+		classifyLabel = result
+	return classifyLabel
+
+
+
+
+
+
+
+
+
