@@ -26,3 +26,4 @@ def setOfWords2Vec(vocabList,inputSet):
 	return returnVec
 
 
+

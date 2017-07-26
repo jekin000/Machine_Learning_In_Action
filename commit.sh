@@ -1,1 +1,1 @@
-git commit -m "[11]-ch04 word2Vec"
+git commit -m "[12]-ch04 test in office"
