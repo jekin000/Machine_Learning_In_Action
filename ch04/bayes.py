@@ -81,3 +81,27 @@ def trainNB1(trainMatrix,trainCategory):
 	p1Vect = np.log(p1Num/p1Denom)
 
 	return p0Vect,p1Vect,pAbusive
+
+def classifyNB(vec2Classify,p0Vec,p1Vec,pClass1):
+	p1 = np.sum(vec2Classify*p1Vec) + np.log(pClass1)
+	p0 = np.sum(vec2Classify*p0Vec) + np.log(1-pClass1)
+	if p1 > p0:
+		return 1
+	else:
+		return 0
+
+def testNB():
+	docs,labels =  loadDataSet()
+	words = createVocabList(docs)
+	wordsVec = []
+	for eachdoc in docs:
+		wordsVec.append(setOfWords2Vec(words,eachdoc))
+
+	p0Vect,p1Vect,pAbusive = trainNB1(np.array(wordsVec),np.array(labels))
+	newdoc1 = ['stupid','garbage']
+	newVec1 = np.array(setOfWords2Vec(words,newdoc1))
+	# I buying him is classify as 1....
+	newdoc0 = ['love','my','dalmation']
+	newVec0 = np.array(setOfWords2Vec(words,newdoc0))
+	print newdoc1,'Classified as:',classifyNB(newVec1,p0Vect,p1Vect,pAbusive)
+	print newdoc0,'Classified as:',classifyNB(newVec0,p0Vect,p1Vect,pAbusive)
