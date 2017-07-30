@@ -1,1 +1,1 @@
-git commit -m "[15]-ch04 classify,testNB"
+git commit -m "[16]-ch04 spam, random trainning/test set"

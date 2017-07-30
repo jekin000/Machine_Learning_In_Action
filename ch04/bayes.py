@@ -105,3 +105,50 @@ def testNB():
 	newVec0 = np.array(setOfWords2Vec(words,newdoc0))
 	print newdoc1,'Classified as:',classifyNB(newVec1,p0Vect,p1Vect,pAbusive)
 	print newdoc0,'Classified as:',classifyNB(newVec0,p0Vect,p1Vect,pAbusive)
+
+def testParse(bigString):
+	wordlen = 2
+	import re
+	#split by char which is not 0~9,a~z; it seems that _ not include
+        listOfTokens = re.split(r'\W*',bigString)	
+	listOfTokens = [tok.lower() for tok in listOfTokens if len(tok)>wordlen]
+	return listOfTokens
+
+def readEmailDir(edir,dirlabel): 
+	import os
+	emails = os.listdir(edir)
+	docs = []
+	labels = []
+	for e in emails:
+		doc = []
+		f = open(edir+'/'+e,'r')
+		docs.append(testParse(f.read()))
+		labels.extend([dirlabel])
+		f.close()
+	return docs,labels
+
+def spamTest():
+	spamdir = 'email/spam'
+	hamdir  = 'email/ham'
+	testSetCnt = 10 
+	docs    = []
+	labels  = []
+
+	d,l = readEmailDir(spamdir,1)
+	docs.extend(d)
+	labels.extend(l)
+	d,l = readEmailDir(hamdir,0)
+	docs.extend(d)
+	labels.extend(l)
+
+	vocabList = createVocabList(docs)
+	print len(docs)
+
+	trainningSet = range(len(docs))
+	testSet = []
+	for i in range(testSetCnt):
+		import random
+		testidx = int(random.uniform(0,len(trainningSet)))
+		testSet.append(trainningSet[testidx])
+		del(trainningSet[testidx])		
+	return testSet,trainningSet,len(trainningSet)
