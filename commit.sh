@@ -1,1 +1,1 @@
-git commit -m "[16]-ch04 spam, random trainning/test set"
+git commit -m "[17]-ch04 spam, generate trainning/testing vector"

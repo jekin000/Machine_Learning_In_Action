@@ -142,7 +142,6 @@ def spamTest():
 	labels.extend(l)
 
 	vocabList = createVocabList(docs)
-	print len(docs)
 
 	trainningSet = range(len(docs))
 	testSet = []
@@ -151,4 +150,14 @@ def spamTest():
 		testidx = int(random.uniform(0,len(trainningSet)))
 		testSet.append(trainningSet[testidx])
 		del(trainningSet[testidx])		
-	return testSet,trainningSet,len(trainningSet)
+	
+	trainWordVec = []
+	for i in trainningSet:
+		trainWordVec.append(setOfWords2Vec(vocabList,docs[i]))
+
+	testWordVec  = []
+	for i in testSet:
+		testWordVec.append(setOfWords2Vec(vocabList,docs[i]))
+
+	return  testWordVec
+
