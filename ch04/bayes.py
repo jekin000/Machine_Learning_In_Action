@@ -29,6 +29,7 @@ def setOfWords2Vec(vocabList,inputSet):
 	return returnVec
 
 
+#For better comprehension
 def trainNB0(trainMatrix,trainCategory):
 	#calc doc's p1, p0 = 1 - p1
 	numTrainDocs = len(trainMatrix)
@@ -53,6 +54,7 @@ def trainNB0(trainMatrix,trainCategory):
 
 	return p0Vect,p1Vect,pAbusive
 
+#enhance to trainNB0
 def trainNB1(trainMatrix,trainCategory):
 	numTrainDocs = len(trainMatrix)
 	pAbusive = sum(trainCategory) / float(numTrainDocs)
@@ -107,7 +109,9 @@ def testNB():
 	print newdoc0,'Classified as:',classifyNB(newVec0,p0Vect,p1Vect,pAbusive)
 
 def testParse(bigString):
-	wordlen = 2
+	#wordlen = 2 # 0.4981
+	wordlen = 3  # 0.4665
+	#wordlen = 4  # 0.5416
 	import re
 	#split by char which is not 0~9,a~z; it seems that _ not include
         listOfTokens = re.split(r'\W*',bigString)	
@@ -126,6 +130,10 @@ def readEmailDir(edir,dirlabel):
 		labels.extend([dirlabel])
 		f.close()
 	return docs,labels
+#docs
+#word dict
+#doc vect -- train
+#test
 
 def spamTest():
 	spamdir = 'email/spam'
@@ -145,12 +153,16 @@ def spamTest():
 
 	trainningSet = range(len(docs))
 	testSet = []
+	testlabels = []
 	for i in range(testSetCnt):
 		import random
 		testidx = int(random.uniform(0,len(trainningSet)))
 		testSet.append(trainningSet[testidx])
+		testlabels.append(labels[testidx])
 		del(trainningSet[testidx])		
+		del(labels[testidx])
 	
+	trainlabels = labels	
 	trainWordVec = []
 	for i in trainningSet:
 		trainWordVec.append(setOfWords2Vec(vocabList,docs[i]))
@@ -159,5 +171,24 @@ def spamTest():
 	for i in testSet:
 		testWordVec.append(setOfWords2Vec(vocabList,docs[i]))
 
-	return  testWordVec
+	p0Vect,p1Vect,pAbusive = trainNB1(np.array(trainWordVec),np.array(trainlabels))
+	errcnt = 0
+	tlidx  = 0
+	for vec in  testWordVec:
+		forecast = classifyNB(np.array(vec),p0Vect,p1Vect,pAbusive)
+		if forecast != trainlabels[tlidx]:
+			errcnt += 1
+		tlidx += 1
+	return float(errcnt)/testSetCnt
+	        	
 
+def spamTestMany():
+	finalcnt = 10
+	cnt = 100	
+	finalErrRates = [] 
+	for i in range(finalcnt):
+		errrates = []
+		for i in range(cnt):
+			errrates.append(spamTest()) 
+		finalErrRates.append(reduce(lambda x,y:x+y,errrates)/len(errrates))
+	return reduce(lambda x,y:x+y,finalErrRates)/len(finalErrRates)
