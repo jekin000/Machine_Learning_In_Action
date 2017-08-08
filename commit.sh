@@ -1,1 +1,1 @@
-git commit -m "[18]-ch04 spam, spam errrate in word len 2,3,4"
+git commit -m "[19]-ch04 spam, fix forecast not match expected"

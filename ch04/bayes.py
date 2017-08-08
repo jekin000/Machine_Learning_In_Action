@@ -19,6 +19,12 @@ def createVocabList(dataSet):
 		vocabSet = vocabSet | set(doc)	
 	return  list(vocabSet)
 	
+def bagOfWords2VecMN(vocabList, inputSet):
+    returnVec = [0]*len(vocabList)
+    for word in inputSet:
+        if word in vocabList:
+            returnVec[vocabList.index(word)] += 1
+    return returnVec
 
 
 def setOfWords2Vec(vocabList,inputSet):
@@ -109,9 +115,9 @@ def testNB():
 	print newdoc0,'Classified as:',classifyNB(newVec0,p0Vect,p1Vect,pAbusive)
 
 def testParse(bigString):
-	#wordlen = 2 # 0.4981
-	wordlen = 3  # 0.4665
-	#wordlen = 4  # 0.5416
+	wordlen = 2 # 0.046
+	#wordlen = 3  # 0.075
+	#wordlen = 4  # 0.062
 	import re
 	#split by char which is not 0~9,a~z; it seems that _ not include
         listOfTokens = re.split(r'\W*',bigString)	
@@ -176,7 +182,7 @@ def spamTest():
 	tlidx  = 0
 	for vec in  testWordVec:
 		forecast = classifyNB(np.array(vec),p0Vect,p1Vect,pAbusive)
-		if forecast != trainlabels[tlidx]:
+		if forecast != testlabels[tlidx]:
 			errcnt += 1
 		tlidx += 1
 	return float(errcnt)/testSetCnt
