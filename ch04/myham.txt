@@ -1,0 +1,7 @@
+Hi Leon,Shawn,Nedy,Leo
+    Let’s help UI to fix the fortify case. As discussion, I assign the case to you. Please ask Luke for help if you are unsure about the solution.
+    Please let QA know, when you fix the related code,and do not forget pair-review.
+
+
+Best Wishes,
+Richard

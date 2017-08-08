@@ -1,4 +1,8 @@
 import numpy as np
+gSpamTrainingParm = {'p0Vect':np.array([])
+	,'p1Vect':np.array([])
+	,'pAbusive':0.0
+	,'vocabList':[]}
 
 def loadDataSet():
 	postingList = [
@@ -114,7 +118,7 @@ def testNB():
 	print newdoc1,'Classified as:',classifyNB(newVec1,p0Vect,p1Vect,pAbusive)
 	print newdoc0,'Classified as:',classifyNB(newVec0,p0Vect,p1Vect,pAbusive)
 
-def testParse(bigString):
+def textParse(bigString):
 	wordlen = 2 # 0.046
 	#wordlen = 3  # 0.075
 	#wordlen = 4  # 0.062
@@ -132,7 +136,7 @@ def readEmailDir(edir,dirlabel):
 	for e in emails:
 		doc = []
 		f = open(edir+'/'+e,'r')
-		docs.append(testParse(f.read()))
+		docs.append(textParse(f.read()))
 		labels.extend([dirlabel])
 		f.close()
 	return docs,labels
@@ -178,6 +182,13 @@ def spamTest():
 		testWordVec.append(setOfWords2Vec(vocabList,docs[i]))
 
 	p0Vect,p1Vect,pAbusive = trainNB1(np.array(trainWordVec),np.array(trainlabels))
+
+	# for further test, it will open the independant API for long term
+	gSpamTrainingParm['p0Vect'] = p0Vect
+	gSpamTrainingParm['p1Vect'] = p1Vect
+	gSpamTrainingParm['pAbusive'] = pAbusive
+	gSpamTrainingParm['vocabList'] = vocabList
+
 	errcnt = 0
 	tlidx  = 0
 	for vec in  testWordVec:
@@ -198,3 +209,17 @@ def spamTestMany():
 			errrates.append(spamTest()) 
 		finalErrRates.append(reduce(lambda x,y:x+y,errrates)/len(errrates))
 	return reduce(lambda x,y:x+y,finalErrRates)/len(finalErrRates)
+
+def getSpamTrainningParm():
+	parm = gSpamTrainingParm
+	return parm 
+
+def predictSpam(eml):
+	f = open(eml,'r')
+	doc = textParse(f.read())
+	f.close()
+	vec = setOfWords2Vec(gSpamTrainingParm['vocabList'],doc)
+	return classifyNB(np.array(vec)
+		,gSpamTrainingParm['p0Vect']
+		,gSpamTrainingParm['p1Vect']
+		,gSpamTrainingParm['pAbusive'])

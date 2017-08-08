@@ -1,1 +1,1 @@
-git commit -m "[19]-ch04 spam, fix forecast not match expected"
+git commit -m "[20]-ch04 spam, add independant predict API; but it can not detect spam"
