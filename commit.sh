@@ -1,1 +1,1 @@
-git commit -m "[21]-ch04 spam, add debuglevel, print p0/p1, check doc word in vocabdict"
+git commit -m "[22]-ch04 spam, update jupyter notebook"
