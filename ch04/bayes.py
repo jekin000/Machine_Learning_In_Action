@@ -3,6 +3,18 @@ gSpamTrainingParm = {'p0Vect':np.array([])
 	,'p1Vect':np.array([])
 	,'pAbusive':0.0
 	,'vocabList':[]}
+gConfig = {"debugLevel":False}
+
+def setConfigDebugLevelEnable():
+	gConfig['debugLevel'] = True
+	return
+
+def setConfigDebugLevelDisable():
+	gConfig['debugLevel'] = False
+	return
+def getConfig():
+	conf = gConfig
+	return conf
 
 def loadDataSet():
 	postingList = [
@@ -94,9 +106,15 @@ def trainNB1(trainMatrix,trainCategory):
 
 	return p0Vect,p1Vect,pAbusive
 
+def printDebug(s):
+	if gConfig['debugLevel']:
+		print s
+	return None
+
 def classifyNB(vec2Classify,p0Vec,p1Vec,pClass1):
 	p1 = np.sum(vec2Classify*p1Vec) + np.log(pClass1)
 	p0 = np.sum(vec2Classify*p0Vec) + np.log(1-pClass1)
+	printDebug('p1='+str(p1)+';p0='+str(p0))
 	if p1 > p0:
 		return 1
 	else:
@@ -223,3 +241,14 @@ def predictSpam(eml):
 		,gSpamTrainingParm['p0Vect']
 		,gSpamTrainingParm['p1Vect']
 		,gSpamTrainingParm['pAbusive'])
+
+
+def checkMailVocab(eml):
+	f = open(eml,'r')
+	doc = textParse(f.read())
+	f.close()
+	inCnt = 0
+	for word in doc:
+		if word in gSpamTrainingParm['vocabList']:
+			inCnt += 1
+	return float(inCnt)/len(doc)
