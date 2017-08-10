@@ -1,1 +1,1 @@
-git commit -m "[23]-ch04 spam, add a spam"
+git commit -m "[24]-ch04 feed, add a feed to extract zh example"
