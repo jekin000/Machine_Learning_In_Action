@@ -1,1 +1,1 @@
-git commit -m "[24]-ch04 feed, add a feed to extract zh example"
+git commit -m "[25]-ch04 rss, extract rss source summary data to docs and labels"

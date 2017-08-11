@@ -252,3 +252,24 @@ def checkMailVocab(eml):
 		if word in gSpamTrainingParm['vocabList']:
 			inCnt += 1
 	return float(inCnt)/len(doc)
+
+
+#for RSS
+#1. docs (from ny['entries'][i][summary])
+#2. labels
+#3. train,test
+#4. trainVec,testVec
+#5. train
+#6. class, calc rate 
+def localwords(feed1,feed0):
+	minlen = min(len(feed1['entries']),len(feed0['entries']))
+	docs = [] 
+	fdclass = []
+	for i in range(minlen):
+		docs.append(textParse(feed1['entries'][i]['summary']))
+		fdclass.append(1)
+		docs.append(textParse(feed0['entries'][i]['summary']))
+		fdclass.append(0)
+	return docs,fdclass
+
+
