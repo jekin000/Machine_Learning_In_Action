@@ -23,5 +23,16 @@ def printZhFeed(feedaddr):
 	s = ny['entries'][1].summary_detail['value']	
 	ShowStructure().feed(s)
 	#To check the source, just print s
-	return
+	pass
 
+def printFeedTitle(feedaddr):
+	import feedparser
+	ny = feedparser.parse(feedaddr)
+	if len(ny['entries'])  == 0:
+		print 'no feed or connect fail.'
+		return
+	
+	for n in ny['entries']:
+		print n['title']
+
+	pass
