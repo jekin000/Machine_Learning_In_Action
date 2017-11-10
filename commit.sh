@@ -1,1 +1,1 @@
-git commit -m "[26]-ch04 print english rss title (uk/world)"
+git commit -m "[27]-ch04 copy the feed code from book."

@@ -254,6 +254,16 @@ def checkMailVocab(eml):
 	return float(inCnt)/len(doc)
 
 
+
+##################feeder
+def calcMostFreq(vocabList,fullText):
+	import operator
+	freqDict = {}
+	for token in vocabList:
+		freqDict[token] = fullText.count(token)
+	sortedFreq = sorted(freqDict.iteritems(),key=operator.itemgetter(1),reverse=True)
+	return sortedFreq[:30]
+
 #for RSS
 #1. docs (from ny['entries'][i][summary])
 #2. labels
@@ -261,15 +271,42 @@ def checkMailVocab(eml):
 #4. trainVec,testVec
 #5. train
 #6. class, calc rate 
-def localwords(feed1,feed0):
-	minlen = min(len(feed1['entries']),len(feed0['entries']))
-	docs = [] 
-	fdclass = []
-	for i in range(minlen):
-		docs.append(textParse(feed1['entries'][i]['summary']))
-		fdclass.append(1)
-		docs.append(textParse(feed0['entries'][i]['summary']))
-		fdclass.append(0)
-	return docs,fdclass
+def localWords(feed1,feed0):
+	import feedparser
+	import random
+	docList=[]; classList=[]; fullText=[]
+	minLen = min(len(feed1['entries']),len(feed0['entries']))
+	for i in range(minLen):
+		wordList = textParse(feed1['entries'][i]['summary'])
+		docList.append(wordList)
+		fullText.append(wordList)
+		classList.append(1)
 
+		wordList = textParse(feed0['entries'][i]['summary'])
+		docList.append(wordList)
+		fullText.append(wordList)
+		classList.append(0)
+	vocabList = createVocabList(docList)
+
+	top30Words = calcMostFreq(vocabList,fullText)
+	for pairW in top30Words:
+		if pairW[0] in vocabList: vocabList.remove(pairW[0])
+	trainningSet = range(2*minLen); testSet = []
+	for i in range(20):
+		randIndex = int(random.uniform(0,len(trainningSet)))
+		testSet.append(trainningSet[randIndex])
+		del(trainningSet[randIndex])
+
+	trainMat = []; trainClasses = []
+	for docIndex in trainningSet:
+		trainMat.append(bagOfWords2VecMN(vocabList,docList[docIndex]))
+		trainClasses.append(classList[docIndex])
+	p0V,p1V,pSpam = trainNB0(np.array(trainMat),np.array(trainClasses))
+	errorCount = 0
+	for docIndex in testSet:
+		wordVector = bagOfWords2VecMN(vocabList,docList[docIndex])
+		if classifyNB(np.array(wordVector),p0V,p1V,pSpam) != classList[docIndex]:
+			errorCount += 1
+	print 'the error rage is: ',float(errorCount)/len(testSet)
+	return vocabList,p0V,p1V
 
