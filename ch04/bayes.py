@@ -1,4 +1,24 @@
 import numpy as np
+
+'''
+Bayes basic:
+1. doc1 -> wordlist1;
+   doc2 -> wordlist2:
+   docN -> wordlistN;
+
+2. transfer wordlists to vocab dictionary;
+3. split dictionary to TrainningSet and TestingSet;
+4. CALC TrainningSet & TestingSet to TrainningVector & TestingVector;
+5. CALC P0,P1,PAbusive by TrainningVector;
+6. CALC predict by TesttingVector, and classify it by test label
+
+===>localwords
+BCC world = p1 		(actually, we would use forum city, such as New York)
+BCC england = p0        (such as Boston)
+give a new word-vector, predict it is world or england
+ 
+
+'''
 gSpamTrainingParm = {'p0Vect':np.array([])
 	,'p1Vect':np.array([])
 	,'pAbusive':0.0
@@ -271,6 +291,7 @@ def calcMostFreq(vocabList,fullText):
 #4. trainVec,testVec
 #5. train
 #6. class, calc rate 
+# localWords means the words used in forum discussion 
 def localWords(feed1,feed0):
 	import feedparser
 	import random

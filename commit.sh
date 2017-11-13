@@ -1,1 +1,1 @@
-git commit -m "[27]-ch04 copy the feed code from book."
+git commit -m "[28]-ch04 study bayes agrithm."
