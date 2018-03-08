@@ -1,1 +1,1 @@
-git commit -m "[30]-ch04 update SPAMTest.label, judge by spam engine, split train files to dst dir."
+git commit -m "[31]-ch04 move mail header first; then label mail to spam/ham"

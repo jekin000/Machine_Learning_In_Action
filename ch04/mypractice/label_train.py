@@ -2,7 +2,7 @@
 import os
 
 
-SRC_DIR		= 'train_1'
+SRC_DIR		= 'src_train'
 TRAIN_LABEL   	= 'SPAMTrain.label'
 SPAM_DIR	= 'spam'
 HAM_DIR		= 'ham'	
@@ -43,7 +43,7 @@ def copy_files(labels,files):
 	file_max_cnt  = len(labels)
 	for i in range(file_max_cnt):
 		file_path_name = os.path.join(TRAIN_DIR,files[i])
-		if int(labels[i]) == 0:
+		if int(labels[i]) == 1:
 			dst_path_name = os.path.join('ham',files[i])
 		else:
 			dst_path_name = os.path.join('spam',files[i])
@@ -51,8 +51,11 @@ def copy_files(labels,files):
 		shutil.copyfile(file_path_name,dst_path_name)
 
 #TODO, maybe we could pre-handle the raw data here.
-delete_dir()
-create_dir()
-labels,files = load_label()
-copy_files(labels,files)
-print 'Finished!'
+if __name__ == '__main__':
+	import ExtractContent 
+	ExtractContent.ExtractBodyFromDir(SRC_DIR,TRAIN_DIR)
+	delete_dir()
+	create_dir()
+	labels,files = load_label()
+	copy_files(labels,files)
+	print 'Finished!'
