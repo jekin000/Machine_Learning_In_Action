@@ -1,1 +1,1 @@
-git commit -m "[31]-ch04 move mail header first; then label mail to spam/ham"
+git commit -m "[32]-ch04 test for spam CSDMC2010"
