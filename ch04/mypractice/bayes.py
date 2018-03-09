@@ -331,3 +331,7 @@ if __name__ == '__main__':
 	print 'total fault rate = {all}%; fp rate = {fp}%, fn rate={fn}%'.format(all=errrate*100.0
 		,fp=fprate*100.0
 		,fn=fnrate*100.0)
+
+	#In the end, consider we use the module to predict new eml which have many new words.
+	#Because our vector is maked base on vocablist, and it is do not have new words,
+	#so, the new words will not contain in vector, and in other words, they no use for predict.
