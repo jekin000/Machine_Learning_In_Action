@@ -173,74 +173,18 @@ def chunks(l,n):
 
 def readEmailDir(edir,maxcnt,dirlabel): 
 	totalEmails = os.listdir(edir)
-	docs = []
-	labels = []
+	docs 	= []
+	labels 	= []
+	names   = []
 	emails = list(chunks(totalEmails,maxcnt))[0] 
 	for e in emails:
 		doc = []
 		f = open(edir+'/'+e,'r')
 		docs.append(textParse(f.read()))
 		labels.extend([dirlabel])
+		names.append(os.path.join(edir,e))
 		f.close()
-	return docs,labels
-#docs
-#word dict
-#doc vect -- train
-#test
-
-def spamTest():
-	spamdir = 'email/spam'
-	hamdir  = 'email/ham'
-	testSetCnt = 10 
-	docs    = []
-	labels  = []
-
-	d,l = readEmailDir(spamdir,1)
-	docs.extend(d)
-	labels.extend(l)
-	d,l = readEmailDir(hamdir,0)
-	docs.extend(d)
-	labels.extend(l)
-
-	vocabList = createVocabList(docs)
-
-	trainningSet = range(len(docs))
-	testSet = []
-	testlabels = []
-	for i in range(testSetCnt):
-		import random
-		testidx = int(random.uniform(0,len(trainningSet)))
-		testSet.append(trainningSet[testidx])
-		testlabels.append(labels[testidx])
-		del(trainningSet[testidx])		
-		del(labels[testidx])
-	
-	trainlabels = labels	
-	trainWordVec = []
-	for i in trainningSet:
-		trainWordVec.append(setOfWords2Vec(vocabList,docs[i]))
-
-	testWordVec  = []
-	for i in testSet:
-		testWordVec.append(setOfWords2Vec(vocabList,docs[i]))
-
-	p0Vect,p1Vect,pAbusive = trainNB1(np.array(trainWordVec),np.array(trainlabels))
-
-	# for further test, it will open the independant API for long term
-	gSpamTrainingParm['p0Vect'] = p0Vect
-	gSpamTrainingParm['p1Vect'] = p1Vect
-	gSpamTrainingParm['pAbusive'] = pAbusive
-	gSpamTrainingParm['vocabList'] = vocabList
-
-	errcnt = 0
-	tlidx  = 0
-	for vec in  testWordVec:
-		forecast = classifyNB(np.array(vec),p0Vect,p1Vect,pAbusive)
-		if forecast != testlabels[tlidx]:
-			errcnt += 1
-		tlidx += 1
-	return float(errcnt)/testSetCnt
-	        	
+	return docs,labels,names
 
 def spamTestMany():
 	finalcnt = 10
@@ -287,21 +231,28 @@ def calcBayes():
 	spamdir = 'spam'
 	hamdir  = 'ham'
 
+	#spam = 1378
+	#ham  = 2949
+	#max totalDocCnt = 1378
 	totalDocCnt = getDocCnt(spamdir,hamdir) 
 	# test
-	totalDocCnt = 600
+	#totalDocCnt = 600, 0.14333
+	totalDocCnt = 100
 	testSetCnt =  totalDocCnt/2
 	docs    = []
 	labels  = []
+	names   = []
 
-	d,l = readEmailDir(spamdir,testSetCnt,1)
+	d,l,n = readEmailDir(spamdir,testSetCnt,1)
 	docs.extend(d)
 	labels.extend(l)
+	names.extend(n)
 	print '==========load spam sample============'
 
-	d,l = readEmailDir(hamdir,testSetCnt,0)
+	d,l,n = readEmailDir(hamdir,testSetCnt,0)
 	docs.extend(d)
 	labels.extend(l)
+	names.extend(n)
 	print '==========load ham sample============='
 
 	vocabList = createVocabList(docs)
@@ -310,24 +261,29 @@ def calcBayes():
 	trainningSet = range(len(docs))
 	testSet = []
 	testlabels = []
+	testnames  = []
 	for i in range(testSetCnt):
 		import random
 		testidx = int(random.uniform(0,len(trainningSet)))
 		testSet.append(trainningSet[testidx])
 		testlabels.append(labels[testidx])
+		testnames.append(names[testidx])
 		del(trainningSet[testidx])		
 		del(labels[testidx])
+		del(names[testidx])
 	
 	print '==========prepared training/testing set==========='
 
 	print '==========calc train vect==========='
 	trainlabels = labels	
+	trainnames  = names
 	trainWordVec = []
 	
 	printPercentCnt = 1
 	for i in trainningSet:
-		trainWordVec.append(setOfWords2Vec(vocabList,docs[i]))
-		print '{0:.5}% '.format(printPercentCnt/(len(trainningSet)*1.0) * 100.0)
+		trainWordVec.append(bagOfWords2VecMN(vocabList,docs[i]))
+		if printPercentCnt%4 == 0:
+			print '{0:.5}% '.format(printPercentCnt/(len(trainningSet)*1.0) * 100.0)
 		printPercentCnt += 1
 
 	print '==========calc test vect==========='
@@ -335,8 +291,9 @@ def calcBayes():
 	testWordVec  = []
 	printPercentCnt = 1
 	for i in testSet:
-		testWordVec.append(setOfWords2Vec(vocabList,docs[i]))
-		print '{0:.5}% '.format(printPercentCnt/(len(testSet)*1.0) * 100.0)
+		testWordVec.append(bagOfWords2VecMN(vocabList,docs[i]))
+		if printPercentCnt%4 == 0:
+			print '{0:.5}% '.format(printPercentCnt/(len(testSet)*1.0) * 100.0)
 		printPercentCnt += 1
 
 	print '==========training==========='
@@ -350,15 +307,27 @@ def calcBayes():
 
 	errcnt = 0
 	tlidx  = 0
-
+	#For CSDMC2010, tag 0 = SPAM, tag 1 = normal
+	fpcnt  = 0
+	fncnt  = 0
 	print '==========classifing==========='
 	for vec in  testWordVec:
 		forecast = classifyNB(np.array(vec),p0Vect,p1Vect,pAbusive)
 		if forecast != testlabels[tlidx]:
+			if forecast == 0:
+				fpcnt += 1
+			else:
+				fncnt += 1
+			print '{name} fail.'.format(name=testnames[tlidx])
+			#print vec
+			#print '\n'
 			errcnt += 1
 		tlidx += 1
-	return float(errcnt)/testSetCnt
+	return float(errcnt)/testSetCnt,float(fpcnt)/testSetCnt,float(fncnt)/testSetCnt
 
 	
 if __name__ == '__main__': 
-	print calcBayes()
+	errrate,fprate,fnrate =  calcBayes()
+	print 'total fault rate = {all}%; fp rate = {fp}%, fn rate={fn}%'.format(all=errrate*100.0
+		,fp=fprate*100.0
+		,fn=fnrate*100.0)
