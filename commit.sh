@@ -1,1 +1,1 @@
-git commit -m "[36]-titanic show summary"
+git commit -m "[37]-show_class_survial"

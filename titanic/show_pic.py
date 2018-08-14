@@ -46,7 +46,20 @@ def show_pic1():
     plt.savefig('pic1.png')
     #plt.show()
 
+def show_class_survival():
+    fig = plt.figure()
+    fig.set(alpha=0.2)
+
+    Survived_0 = data_train.Pclass[data_train.Survived==0].value_counts()
+    Survived_1 = data_train.Pclass[data_train.Survived==1].value_counts()
+    df = pd.DataFrame({'sur':Survived_1,'no-sur':Survived_0})
+    df.plot(kind='bar',stacked=True)
+    plt.title('Class Survival')
+    plt.xlabel('Class')
+    plt.ylabel('Num')
+    plt.savefig('class_survival.png')
 
 if __name__ == '__main__':
-    show_pic1()
+    #show_pic1()
+    show_class_survival()
 
